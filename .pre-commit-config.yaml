@@ -1,0 +1,28 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+fail_fast: true
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
+    hooks:
+    - id: check-added-large-files
+    - id: check-shebang-scripts-are-executable
+      exclude: Jenkinsfile
+    - id: check-toml
+    - id: detect-private-key
+    - id: end-of-file-fixer
+    - id: fix-byte-order-marker
+    - id: mixed-line-ending
+    - id: trailing-whitespace
+-   repo: local
+    hooks:
+    - id: check-environment
+      name: Check that the right Python environment is active
+      pass_filenames: false
+      language: system
+      entry: "python -c 'import react_repl_agent'"
+    - id: code-formatting
+      name: Run auto-code formatters
+      pass_filenames: false
+      language: system
+      entry: "tools/run_formatting.sh"
