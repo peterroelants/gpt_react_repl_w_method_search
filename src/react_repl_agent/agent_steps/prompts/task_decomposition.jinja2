@@ -1,0 +1,20 @@
+Decompose the given tasks into steps as an ordered list. Each step should be a single action that can be performed by a computer. Two examples are given:
+
+Example 1:
+TASK: Get the Spotify Playlist for Radiohead and send it via email to Gert, from accounting.
+STEPS:
+1. Use the Spotify API to get the playlist for Radiohead.
+2. Find the email address of Gert, from accounting.
+3. Compose an email with the playlist directed to Gert.
+4. Send the composed email to Gert, from accounting.
+
+Example 2:
+TASK: Get the Wikipedia page for 'Python', the programming language. Get the 3rd paragraph of the article and save it to 'python.txt'.
+STEPS:
+1. Use the Wikipedia API to get the page for 'Python', the programming language.
+2. Get the 3rd paragraph of the Wikipedia page returned.
+3. Save extracted text to a 'python.txt' file.
+
+Decompose the given task:
+TASK: {{ task }}
+STEPS:
