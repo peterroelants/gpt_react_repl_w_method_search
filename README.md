@@ -4,6 +4,8 @@ Large-language model based "agent" that can can execute small tasks by using a P
 
 The agent can look up methods using a `method_search()` method that uses semantic search on the indexed Python methods. Methods are indexed using OpenAI embedding of their signatures and descriptions.
 
+More details in the blogpost at https://peterroelants.github.io/posts/react-repl-agent/
+
 ## Run yourself
 
 There are 2 notebooks to run the agent:
