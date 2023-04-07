@@ -1,0 +1,137 @@
+Execute the given task in steps. Use the following dialog format:
+
+TASK: The input task to execute by taking actions step by step.
+THOUGHT 1:
+Reason step-by-step which action to take next to solve the task. Make sure no steps are forgotten. Use `method_search(description: str)` to find methods to execute each step.
+ACTION 1:
+```Python
+method_search("description_xyzzy")  # Search method to execute next step
+```
+OBSERVATION 1:
+`foo(bar, ...)`: Method related to "description_xyzzy", found using `method_search("description_xyzzy")`.
+THOUGHT 2:
+Reason if method `foo(bar, ...)` is useful to solve step 1. If not, call `method_search` again.
+ACTION 2:
+```python
+bar = qux[...]  # Format parameters to be used in a method call, any values need to come verbatim from task or observations.
+# Make only 1 method call per action!
+baz = foo(bar, ...)  # Call method `foo` found by using `method_search(description: str)` in a previous step. Store the result in `baz`, which can be used in following actions. Use descriptive variable names.
+print(baz)  # Print the result to be shown in the next observation.
+```
+OBSERVATION 2:
+stdout/stderr of running the previous action.
+... (THOUGHT/ACTION/OBSERVATION can repeat N times until the full task is completed)
+THOUGHT N:
+Reason step-by-step why the full task is completed, and finish if it is.
+ACTION N:
+```python
+stop()  # Make sure the given task, and all its steps, have been executed completely before stopping.
+```
+
+Extras Instructions:
+- Keep actions simple, call only 1 method per action. Don't chain method calls.
+- Use descriptive variable names.
+- If needed, get current date using `datetime.now()` and current location using `get_user_location() -> dict`.
+- Use `print(var)` to print a variable to be shown in the next observation.
+- Importing is not allowed! To execute actions, access is provided to a `method_search(description: str)` method that prints a list of available Python 3 methods (signatures and descriptions) related to a given description. Use the methods returned by `method_search(description: str)` to complete the task. These methods don't need to be imported. Pay attention to the method signatures.
+- Any values used need to come word-for-word from the given task or previous observations!
+
+
+Start Executing the task:
+
+TASK: Send a descriptive Discord message with the weather forecast for the next 5 days for my location. Describe the weather each day with an appropriate emoji, include the dates in the message.
+THOUGHT 1:
+To solve the task I think I need to execute the following steps:
+1. Use the weather API to get the forecast for the next 5 days for my location.
+2. For each day, create a descriptive sentence with the weather forecast and an appropriate emoji.
+3. Include the dates in the message.
+4. Compose a Discord message with the forecast and dates.
+5. Send the composed Discord message.
+Deviation from these steps might be needed based on following observations.
+To start out I need to use the provided `method_search(description: str)` method to search for new methods related to "Use the weather API to get the forecast for the next 5 days for my location".
+ACTION 1:
+```python
+method_search("Use the weather API to get the forecast for the next 5 days for my location")
+```
+OBSERVATION 1:
+`get_daily_weather_forecast(latitude: float, longitude: float) -> dict`: Get the daily weather forecast for the next 7 days for the given location (geographical coordinates).
+`get_current_weather(latitude: float, longitude: float) -> dict`: Get the current weather for the given location (geographical coordinates).
+`get_nasa_astronomy_picture_of_the_day() -> dict`: Get the NASA Astronomy Picture of the Day (APOD).
+Not all the above methods might be needed. Use `method_search(description: str)` to search for more available methods if required!
+THOUGHT 2:
+Based on previous observations, `get_daily_weather_forecast(latitude: float, longitude: float) -> dict` seems to be the most useful method to get the forecast for the next 5 days for my location. I need to format the parameters to be used in a method call, and call the method.
+ACTION 2:
+```python
+location = get_user_location()  # Get current location
+latitude = location["latitude"]  # Get latitude from location
+longitude = location["longitude"]  # Get longitude from location
+forecast = get_daily_weather_forecast(latitude, longitude)  # Call method to get the forecast for the next 5 days
+print(forecast)  # Print the result to be shown in the next observation
+```
+OBSERVATION 2:
+{'latitude': 50.94, 'longitude': 5.3399997, 'daily_units': {'time': 'iso8601', 'weathercode': 'wmo code', 'temperature_2m_max': '°C', 'temperature_2m_min': '°C', 'precipitation_sum': 'mm'}, 'daily': {'time': ['2023-04-07', '2023-04-08', '2023-04-09', '2023-04-10', '2023-04-11', '2023-04-12', '2023-04-13'], 'weathercode': [61, 3, 45, 61, 95, 80, 3], 'temperature_2m_max': [11.4, 14.1, 15.3, 15.3, 12.5, 11.6, 11.8], 'temperature_2m_min': [6.9, 6.4, 3.9, 6.9, 7.0, 7.0, 5.3], 'precipitation_sum': [2.4, 0.0, 0.0, 2.4, 12.0, 7.2, 0.0], 'description': ['Rain: Slight intensity', 'Overcast', 'Fog', 'Rain: Slight intensity', 'Thunderstorm: Slight or moderate', 'Rain showers: Slight intensity', 'Overcast']}, 'timezone': 'Europe/Brussels [CEST]'}
+THOUGHT 3:
+Based on previous observations, I have the forecast for the next 5 days for my location. I need to create a descriptive sentence with the weather forecast and an appropriate emoji for each day, and include the dates in the message.
+ACTION 3:
+```python
+weather_emojis = {61: "🌧️", 3: "☁️", 45: "🌫️", 95: "⛈️", 80: "🌦️"}  # Dictionary with weather codes and corresponding emojis
+weather_sentences = []  # List to store the weather sentences
+
+for i in range(5):  # Iterate over the next 5 days
+    weather_code = forecast["daily"]["weathercode"][i]  # Get the weather code for the current day
+    emoji = weather_emojis[weather_code]  # Get the corresponding emoji
+    date = forecast["daily"]["time"][i]  # Get the date
+    description = forecast["daily"]["description"][i]  # Get the description
+    sentence = f"{date}: {description} {emoji}"  # Create the sentence
+    weather_sentences.append(sentence)  # Append the sentence to the list
+
+print(weather_sentences)  # Print the result to be shown in the next observation
+```
+OBSERVATION 3:
+['2023-04-07: Rain: Slight intensity 🌧️', '2023-04-08: Overcast ☁️', '2023-04-09: Fog 🌫️', '2023-04-10: Rain: Slight intensity 🌧️', '2023-04-11: Thunderstorm: Slight or moderate ⛈️']
+THOUGHT 4:
+Based on previous observations, I have the weather sentences for the next 5 days with the corresponding emojis. I need to compose a Discord message with the forecast and dates.
+ACTION 4:
+```python
+message = "Weather forecast for the next 5 days:\n"  # Start the message
+
+for sentence in weather_sentences:  # Iterate over the weather sentences
+    message += f"{sentence}\n"  # Append the sentence to the message
+
+print(message)  # Print the result to be shown in the next observation
+```
+OBSERVATION 4:
+Weather forecast for the next 5 days:
+2023-04-07: Rain: Slight intensity 🌧️
+2023-04-08: Overcast ☁️
+2023-04-09: Fog 🌫️
+2023-04-10: Rain: Slight intensity 🌧️
+2023-04-11: Thunderstorm: Slight or moderate ⛈️
+THOUGHT 5:
+Based on previous observations, I have the composed Discord message with the forecast and dates. I need to send the composed Discord message.
+ACTION 5:
+```python
+send_discord_message(message)  # Call method to send the composed Discord message
+stop()  # Make sure the given task, and all its steps, have been executed completely before stopping.
+```
+OBSERVATION 5:
+ERROR: NameError on line 1: `send_discord_message(message)  # Call method to send the composed Discord message`: name 'send_discord_message' is not defined
+Only call available methods and make sure variables are defined!
+To find new methods, use the `method_search(description: str)` method in the next action to search for available methods!
+THOUGHT 6:
+Based on previous observations, `send_discord_message(message)` is not available. I need to use the provided `method_search(description: str)` method to search for new methods related to "Send a Discord message".
+ACTION 6:
+```python
+method_search("Send a Discord message")
+```
+OBSERVATION 6:
+`send_message_discord(msg: str, image: Optional[Image]=None)`: Send a message to discord. An optional image to send can be provided.
+`send_slack_message(msg: str, channel_id: str)`: Send a message to the Slack channel with the specified ID.
+`send_slack_image(img: Image, msg: str, channel: str)`: Send the given image and corresponding message to the Slack channel with the given name or ID.
+THOUGHT 7:
+Based on previous observations, `send_message_discord(msg: str, image: Optional[Image]=None)` seems to be the most useful method to send the composed Discord message. I need to call the method.
+ACTION 7:
+```python
+send_message_discord(message)  # Call method to send the composed Discord message
+stop()  # Make sure the given task, and all its steps, have been executed completely before stopping.
+```

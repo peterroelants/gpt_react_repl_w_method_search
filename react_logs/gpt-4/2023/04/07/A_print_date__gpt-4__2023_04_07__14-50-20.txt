@@ -1,0 +1,83 @@
+Execute the given task in steps. Use the following dialog format:
+
+TASK: The input task to execute by taking actions step by step.
+THOUGHT 1:
+Reason step-by-step which action to take next to solve the task. Make sure no steps are forgotten. Use `method_search(description: str)` to find methods to execute each step.
+ACTION 1:
+```Python
+method_search("description_xyzzy")  # Search method to execute next step
+```
+OBSERVATION 1:
+`foo(bar, ...)`: Method related to "description_xyzzy", found using `method_search("description_xyzzy")`.
+THOUGHT 2:
+Reason if method `foo(bar, ...)` is useful to solve step 1. If not, call `method_search` again.
+ACTION 2:
+```python
+bar = qux[...]  # Format parameters to be used in a method call, any values need to come verbatim from task or observations.
+# Make only 1 method call per action!
+baz = foo(bar, ...)  # Call method `foo` found by using `method_search(description: str)` in a previous step. Store the result in `baz`, which can be used in following actions. Use descriptive variable names.
+print(baz)  # Print the result to be shown in the next observation.
+```
+OBSERVATION 2:
+stdout/stderr of running the previous action.
+... (THOUGHT/ACTION/OBSERVATION can repeat N times until the full task is completed)
+THOUGHT N:
+Reason step-by-step why the full task is completed, and finish if it is.
+ACTION N:
+```python
+stop()  # Make sure the given task, and all its steps, have been executed completely before stopping.
+```
+
+Extras Instructions:
+- Keep actions simple, call only 1 method per action. Don't chain method calls.
+- Use descriptive variable names.
+- If needed, get current date using `datetime.now()` and current location using `get_user_location() -> dict`.
+- Use `print(var)` to print a variable to be shown in the next observation.
+- Importing is not allowed! To execute actions, access is provided to a `method_search(description: str)` method that prints a list of available Python 3 methods (signatures and descriptions) related to a given description. Use the methods returned by `method_search(description: str)` to complete the task. These methods don't need to be imported. Pay attention to the method signatures.
+- Any values used need to come word-for-word from the given task or previous observations!
+
+
+Start Executing the task:
+
+TASK: Print the current date.
+THOUGHT 1:
+To solve the task I think I need to execute the following steps:
+1. Import the datetime module.
+2. Get the current date using the datetime module.
+3. Convert the current date to a string format.
+4. Print the string representation of the current date.
+Deviation from these steps might be needed based on following observations.
+To start out I need to use the provided `method_search(description: str)` method to search for new methods related to "Import the datetime module".
+ACTION 1:
+```python
+method_search("Import the datetime module")
+```
+OBSERVATION 1:
+`datetime(year, month, day[, hour[, minute[, second[, microsecond[,tzinfo]]]]])`: Return a datetime object representing given date and time.
+`datetime.now() -> datetime`: Return a datetime object representing the current date and time.
+`datetime.strftime(format)`: Return a string representing the date and time.
+Not all the above methods might be needed. Use `method_search(description: str)` to search for more available methods if required!
+THOUGHT 2:
+Based on previous observations, I found the `datetime.now()` method which returns the current date and time. I don't need to import the datetime module as the methods are already available. Now, I need to get the current date using the `datetime.now()` method.
+ACTION 2:
+```python
+current_date_time = datetime.now()
+print(current_date_time)
+```
+OBSERVATION 2:
+2023-04-07 14:49:58.527460
+THOUGHT 3:
+Based on previous observations, I got the current date and time as a datetime object. Now, I need to convert the datetime object to a string format that only shows the date. I can use the `datetime.strftime(format)` method for this purpose. I will format the date as "YYYY-MM-DD".
+ACTION 3:
+```python
+formatted_date = current_date_time.strftime("%Y-%m-%d")
+print(formatted_date)
+```
+OBSERVATION 3:
+2023-04-07
+THOUGHT 4:
+Based on previous observations, I have successfully converted the datetime object to a string format that only shows the date. The formatted date is "2023-04-07". The task is now completed as I have printed the current date.
+ACTION 4:
+```python
+stop()  # The task is completed, and all its steps have been executed completely.
+```
