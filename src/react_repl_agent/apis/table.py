@@ -127,3 +127,4 @@ def run_sql_query(table: Table, sql: str) -> Table:
             "\nMake sure the SQL query is correct! Pre-format all variables in the query string and use quotes if needed."
         ) from exc
     return Table(result_df)
+
