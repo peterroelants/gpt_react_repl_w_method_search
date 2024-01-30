@@ -26,28 +26,87 @@ class Table:
     _df: pd.DataFrame
 
     def __init__(self, df: pd.DataFrame) -> None:
+        """
+        This function is a constructor that takes a pandas DataFrame `df` as an
+        argument and assigns it to the instance variable `_df`.
+
+        Args:
+            df (pd.DataFrame): The `df` input parameter is used to initialize the
+                instance variable `_df` of the same type `pd.DataFrame`.
+
+        """
         self._df = df
 
     def __len__(self) -> int:
+        """
+        This is a special method (function) implemented by the `object` class
+        (which is the base class of all classes) and is called `__len__`. It returns
+        the length of the attribute `self._df` which is an instance attribute of
+        the object.
+
+        Returns:
+            int: The output returned by this function is `len(self._df)`.
+
+        """
         return len(self._df)
 
     @property
     def columns(self) -> list[str]:
+        """
+        The function `columns` takes an object of type `Dataframe` and returns a
+        list of its column names as strings.
+
+        Returns:
+            list[str]: The output returned by this function is a list of column
+            names as strings.
+
+        """
         return self._df.columns.values.tolist()
 
     def __repr__(self):
+        """
+        This function defines the `__repr__()` method for a class called `Table`.
+
+        Returns:
+            str: The output returned by this function is:
+            
+            "<Table columns=(['apple': str(), 'banana': str(), ...], len=5)>>"
+
+        """
         columns = self.columns
         types = [str(d) for d in self._df.dtypes.tolist()]
         columns_with_types = [f"{c}: {t}" for c, t in zip(columns, types)]
         return f"<Table columns={columns_with_types!r}, len={len(self)})>"
 
     def __getattr__(self, name):
+        """
+        This function implements the `__getattr__()` method for a Python object
+        representing a table.
+
+        Args:
+            name (str): In this function `__getattr__`, the `name` parameter is
+                the name of the attribute that is being accessed on the object.
+
+        """
         raise TableAttributeError(
             f"`Table.{name}` does not exist! Only use `Table` as a parameter in other methods. "
             " Use `run_sql_query(table: Table, sql: str) -> Table` to execute a SQL query against the table, e.g. to select a column. Use `get_table_row(table: Table, row: int) -> dict` to select a row."
         )
 
     def __getitem__(self, idx: int):
+        """
+        This function is a custom `__getitem__()` method for a class `Table` that
+        raises errors if the index is not an integer or is out of range.
+
+        Args:
+            idx (int): The `idx` input parameter specifies the index of a row to
+                retrieve from the table.
+
+        Returns:
+            dict: The output returned by this function is a `DictWithKeyErrorReference`
+            object.
+
+        """
         if not isinstance(idx, int):
             raise TableIndexTypeError(
                 "Table indexing selects a row by its integer position."
